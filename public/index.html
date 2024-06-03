@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="h-screen w-screen bg-zinc-900 p-3">
+    <div class="main p-10 bg-zinc-700 text-white">
+        <div class="h-full w-full flex items-center gap-5 p-10">
+            <h1>Chat App</h1>
+            <input type="text" id="message" class="outline text-black"></input>
+            <button id="send" class="bg-white rounded text-blue-300 p-1 border border-blue-300">Send</button>
+        </div>
+        <div class="bg-white text-black">
+            <ul id="usersMssgs">
+            </ul>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io("http://localhost:3000");
+
+
+        const mssg = document.getElementById("message");
+        const sendButton = document.getElementById("send");
+        const usersMssgs = document.getElementById("usersMssgs");
+
+        socket.on("connect", () => {
+            console.log("Client is connected with id :" + socket.id)
+        })
+
+        sendButton.addEventListener("click", () => {
+            socket.emit("messageFromClient", { data: mssg.value });
+            mssg.value = "";
+        });
+
+        socket.on("messageForClients", (data) => {
+            usersMssgs.innerHTML += `<li class="bg-green-600 text-white border"> ${data.data}</li>`;
+        });
+
+    </script>
+</body>
+
+</html>
